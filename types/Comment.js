@@ -1,0 +1,36 @@
+/** @typedef {object} json
+ * @property {number} id
+ * @property {number} post
+ * @property {number} parent
+ * @property {number} author
+ * @property {string} author_name
+ * @property {string} author_url
+ * @property {string} date
+ * @property {string} date_gmt
+ * @property {object} content
+ * @property {string} content.rendered
+ * @property {string} link
+ * @property {string} status
+ * @property {string} type
+ * @property {object} author_avatar_urls
+ * @property {string} author_avatar_urls.24
+ * @property {string} author_avatar_urls.48
+ * @property {string} author_avatar_urls.96
+ * @property {object} meta
+ * @property {number} meta.likes_count
+ * @property {number[]} meta.likes_users
+ * @property {object} _links
+ * @property {object[]} _links.self
+ * @property {string} _links.self.href
+ * @property {object} _links.self.targetHints
+ * @property {string[]} _links.self.targetHints.allow
+ * @property {object[]} _links.collection
+ * @property {string} _links.collection.href
+ * @property {object[]} _links.up
+ * @property {boolean} _links.up.embeddable
+ * @property {string} _links.up.post_type
+ * @property {string} _links.up.href
+ * @property {object[]} _links.children
+ * @property {boolean} _links.children.embeddable
+ * @property {string} _links.children.href
+ */
