@@ -1,27 +1,27 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useCommentParentChain, useExpandToComment } from '@/hooks/useCommentParentChain';
 import { fetchCommentsByPostId } from '@/lib/api/client/commentsClient';
 import CommentItem from './CommentItem';
 import Skeleton from '@/components/ui/Skeleton';
 
-async function fetchRepliesCount(parentId) {
-  const res = await fetch(`/api/comments?parent=${parentId}&per_page=1`);
-  const total = parseInt(res.headers.get('X-WP-Total') || '0', 10);
-  return Number.isFinite(total) ? total : 0;
-}
-
-async function fetchReplies(parentId) {
-  const res = await fetch(`/api/comments?parent=${parentId}`);
-  if (!res.ok) throw new Error('Errore nel caricamento risposte');
-  return res.json();
-}
-
 export default function CommentsList({ post, setReplyToCommentId, setFormData }) {
   const queryClient = useQueryClient();
   const { parentChain, ready } = useCommentParentChain();
+
+  const fetchReplies = useCallback(async (parentId) => {
+    const res = await fetch(`/api/comments?parent=${parentId}`);
+    if (!res.ok) throw new Error('Errore nel caricamento risposte');
+    return res.json();
+  }, []);
+
+  const fetchRepliesCount = useCallback(async (parentId) => {
+    const res = await fetch(`/api/comments?parent=${parentId}&per_page=1`);
+    const total = parseInt(res.headers.get('X-WP-Total') || '0', 10);
+    return Number.isFinite(total) ? total : 0;
+  }, []);
 
   // --- Scroll al commento selezionato ---
   useEffect(() => {
@@ -80,11 +80,12 @@ export default function CommentsList({ post, setReplyToCommentId, setFormData })
     return Object.fromEntries(mainCommentsIds.map((id, i) => [id, countsQueries[i]?.data ?? 0]));
   }, [mainCommentsIds, countsQueries]);
 
-  const prefetchReplies = (id) =>
+  const prefetchReplies = useCallback((id) => {
     queryClient.prefetchQuery({
       queryKey: ['comments', 'replies', id],
       queryFn: () => fetchReplies(id),
     });
+  }, []);
 
   /*     let renderComments = (
             <ul className="space-y-4">

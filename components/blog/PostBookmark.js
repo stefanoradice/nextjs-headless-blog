@@ -163,7 +163,7 @@ export default function PostBookmark({ post, classes = '' }) {
 
   return (
     <button
-      className={classes}
+      className={`text-yellow-500 hover:text-yellow-600 z-10 cursor-pointer ${classes}`}
       onClick={handleLike}
       aria-label={isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}
     >

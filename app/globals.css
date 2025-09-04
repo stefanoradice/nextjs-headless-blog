@@ -26,16 +26,16 @@ body {
 }
 
 .post-card {
-  border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
   background: #fff;
   transition: box-shadow 0.2s ease;
   cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .post-card:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
 
 .image-container {

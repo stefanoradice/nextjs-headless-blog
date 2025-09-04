@@ -22,24 +22,24 @@ Un progetto **blog moderno** sviluppato con **Next.js 13 (App Router)** e **Word
 
 ## **Caratteristiche**
 
-* Blog headless con Next.js 13 e WordPress.
-* Rendering ibrido: **RSC**, **SSR**, **client-side**.
-* **Autenticazione JWT** e gestione sessione sicura con cookie HttpOnly.
-* **Infinite scroll** e caricamento dinamico dei post.
-* **Interazione in tempo reale** per commenti e bookmark.
-* UI modulare con **componenti riutilizzabili**.
-* Ottimizzazione performance e caching dati con **React Query / SWR**.
+- Blog headless con Next.js 13 e WordPress.
+- Rendering ibrido: **RSC**, **SSR**, **client-side**.
+- **Autenticazione JWT** e gestione sessione sicura con cookie HttpOnly.
+- **Infinite scroll** e caricamento dinamico dei post.
+- **Interazione in tempo reale** per commenti e bookmark.
+- UI modulare con **componenti riutilizzabili**.
+- Ottimizzazione performance e caching dati con **React Query / SWR**.
 
 ---
 
 ## **Tecnologie**
 
-* **Frontend:** Next.js 13, React 18, TypeScript
-* **Backend:** WordPress, JWT Authentication
-* **Gestione stato:** React Query / SWR
-* **Realtime:** WebSocket custom context
-* **UI / Componenti:** TailwindCSS
-* **Testing:** In previsione (Jest / React Testing Library)
+- **Frontend:** Next.js 13, React 18, TypeScript
+- **Backend:** WordPress, JWT Authentication
+- **Gestione stato:** React Query / SWR
+- **Realtime:** WebSocket custom context
+- **UI / Componenti:** TailwindCSS
+- **Testing:** In previsione (Jest / React Testing Library)
 
 ---
 
@@ -79,12 +79,12 @@ yarn dev
 
 ## **Configurazione WordPress**
 
-* Installare plugin:
+- Installare plugin:
+  - JWT Authentication for WP REST API
+  - Eventuali plugin per custom post type o REST endpoint personalizzati
 
-  * JWT Authentication for WP REST API
-  * Eventuali plugin per custom post type o REST endpoint personalizzati
-* Creare utenti e ruoli necessari
-* Verificare che i permessi REST API siano corretti
+- Creare utenti e ruoli necessari
+- Verificare che i permessi REST API siano corretti
 
 ---
 
@@ -103,22 +103,22 @@ yarn dev
 
 ## **Funzionalità implementate**
 
-* Fetch dati post, categorie, tag via REST API
-* Infinite scroll con React Server Components
-* Autenticazione JWT con cookie HttpOnly
-* Bookmark post
-* Commenti in tempo reale via WebSocket
-* Layout responsive e componenti modulari
+- Fetch dati post, categorie, tag via REST API
+- Infinite scroll con React Server Components
+- Autenticazione JWT con cookie HttpOnly
+- Bookmark post
+- Commenti in tempo reale via WebSocket
+- Layout responsive e componenti modulari
 
 ---
 
 ## **Funzionalità future**
 
-* Editing e cancellazione post
-* Ruoli utenti avanzati e contenuti premium
-* Ottimizzazione SEO e meta tag dinamici
-* Miglioramento performance e streaming RSC
-* Test automatizzati e CI/CD
+- Editing e cancellazione post
+- Ruoli utenti avanzati e contenuti premium
+- Ottimizzazione SEO e meta tag dinamici
+- Miglioramento performance e streaming RSC
+- Test automatizzati e CI/CD
 
 ---
 

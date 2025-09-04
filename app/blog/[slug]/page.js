@@ -1,11 +1,9 @@
-// app/blog/[slug]/page.js
 import Breadcrumbs from '@/components/common/Breadcrumbs';
-
-import PostLike from '@/components/blog/PostBookmark';
 import { getPostsPaginated, getPostBySlug } from '@/lib/api/client';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Comments from '@/components/features/comments/Comments';
+import PostBookmark from '@/components/blog/PostBookmark';
 
 export async function generateStaticParams() {
   try {
@@ -75,7 +73,7 @@ export default async function PostPage({ params }) {
 
       <div className="flex justify-between text-sm text-gray-500 mb-6">
         <time dateTime={post.date}>{new Date(post.date).toLocaleDateString()}</time>
-        <PostLike post={post} />
+        <PostBookmark post={post} />
       </div>
 
       {coverImage && (

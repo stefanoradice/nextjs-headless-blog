@@ -21,7 +21,7 @@ const eslintConfig = [
       jsdoc,
     },
     rules: {
-      'prettier/prettier': 'error',
+      'prettier/prettier': 'warn',
       'no-unused-vars': 'warn',
       'jsdoc/check-alignment': 'warn',
       'jsdoc/check-param-names': 'warn',

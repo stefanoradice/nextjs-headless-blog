@@ -1,9 +1,10 @@
+import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthContext';
 import { useWS } from '@/context/WSContext';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default function CommentItem({
+export default React.memo(function CommentItem({
   comment,
   level = 0,
   initialCount = 0,
@@ -22,6 +23,7 @@ export default function CommentItem({
   const isUserComment = user?.id === comment.author;
   const [deleteButtonRef, setDeleteButtonRef] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
   const [likes, setLikes] = useState(comment.meta.likes_count || 0);
   const [isLiked, setIsLiked] = useState(comment.meta.likes_users?.includes(user?.id));
   const { sendMessage, subscribe } = useWS();
@@ -109,6 +111,7 @@ export default function CommentItem({
   };
 
   const handleLike = async () => {
+    setIsLoadingLike(true);
     if (!user) {
       alert('Devi essere loggato per mettere mi piace'); // TODO: meglio un modal con invito al login
       return;
@@ -128,6 +131,7 @@ export default function CommentItem({
       alert('Errore durante il like');
       return;
     }
+    setIsLoadingLike(false);
 
     // Invalida le query rilevanti
     await queryClient.invalidateQueries({ queryKey: ['comments', postId] });
@@ -160,6 +164,11 @@ export default function CommentItem({
             {expanded ? 'Nascondi risposte' : `Mostra ${totalRepliesCount} commenti`}
           </button>
         )}
+        {isFetching && (
+          <div className="mt-2">
+            <Spinner size="sm" color="gray-500" />
+          </div>
+        )}
         {user && (
           <button onClick={onReply} className="text-blue-600 hover:underline text-sm mt-2">
             Rispondi
@@ -187,9 +196,14 @@ export default function CommentItem({
         )}
         <button
           onClick={handleLike}
+          disabled={isLoadingLike}
           className="text-blue-600 hover:underline absolute top-2 right-2 text-sm mt-2"
         >
-          {`(${likes}) ${isLiked ? ' Rimuovi mi piace' : 'Mi piace'}`}
+          {isLoadingLike ? (
+            <Spinner size={4} />
+          ) : (
+            `(${likes}) ${isLiked ? ' Rimuovi mi piace' : 'Mi piace'}`
+          )}
         </button>
 
         {isError && <p className="text-xs text-red-600 mt-2">Errore nel caricamento risposte.</p>}
@@ -219,4 +233,4 @@ export default function CommentItem({
       )}
     </li>
   );
-}
+});

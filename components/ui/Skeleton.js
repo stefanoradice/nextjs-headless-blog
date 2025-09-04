@@ -1,8 +1,8 @@
-export default function Skeleton({ height = 306, width = '100%', variant = 'post' }) {
+export default function Skeleton({ height = null, width = null, variant = 'post', classes = '' }) {
   if (variant === 'post') {
     return (
       <div
-        className="animate-pulse rounded-lg border border-gray-200 p-4 shadow-sm space-y-3"
+        className={`animate-pulse rounded-lg border border-gray-200 p-4 shadow-sm space-y-3 ${classes}`}
         style={{ height, width }}
       >
         <div className="h-35 w-full rounded-md bg-gray-300"></div>
@@ -22,7 +22,7 @@ export default function Skeleton({ height = 306, width = '100%', variant = 'post
   if (variant === 'comment') {
     return (
       <div
-        className="flex flex-col justify-center animate-pulse rounded-lg border border-gray-200 p-4 shadow-sm space-y-3"
+        className={`flex flex-col justify-center animate-pulse rounded-lg border border-gray-200 p-4 shadow-sm space-y-3 ${classes}`}
         style={{ height, width }}
       >
         <div className="h-3 w-20 rounded-md bg-gray-300 mb-3"></div>
@@ -32,5 +32,7 @@ export default function Skeleton({ height = 306, width = '100%', variant = 'post
     );
   }
 
-  return <div className="animate-pulse rounded bg-gray-300" style={{ height, width }} />;
+  return (
+    <div className={`animate-pulse rounded-xl bg-gray-300 ${classes}`} style={{ height, width }} />
+  );
 }

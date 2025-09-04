@@ -1,9 +1,10 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Sidebar({ categories, tags }) {
+  useEffect(() => {}, []);
   const router = useRouter();
   const searchParams = useSearchParams();
 
