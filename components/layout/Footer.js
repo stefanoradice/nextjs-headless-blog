@@ -1,5 +1,5 @@
 function Footer() {
-  return <div>Footer</div>;
+  return <div role="contentinfo">Footer</div>;
 }
 
 export default Footer;

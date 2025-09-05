@@ -33,7 +33,6 @@ export default React.memo(function PostCard({ post }) {
               style={{ objectFit: 'cover' }}
               priority
               sizes="(max-width: 768px) 100vw, 33vw"
-              placeholder="blur"
             />
           </div>
         )}

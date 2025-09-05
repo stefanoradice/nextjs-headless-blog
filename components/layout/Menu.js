@@ -18,7 +18,7 @@ export default function Menu() {
     */
 
   return (
-    <nav className="main-menu">
+    <nav className="main-menu" role="navigation">
       <ul className="flex gap-4">
         {menu.map((item, index) => (
           <li key={index}>

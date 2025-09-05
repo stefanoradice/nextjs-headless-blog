@@ -86,37 +86,53 @@ export default function CommentForm({
     <form
       onSubmit={handleSubmit}
       className="mt-10 p-4 border border-gray-300 rounded shadow-md max-w-xxl"
+      aria-labelledby={replyToCommentId ? 'reply-title' : 'comment-title'}
     >
       {replyToCommentId ? (
-        <p>
+        <p id="reply-title">
           Stai rispondendo al commento #{replyToCommentId}
-          <button onClick={() => setReplyToCommentId(null)} className="ml-2 text-red-600">
+          <button
+            type="button" // 👈 importante: non deve inviare il form
+            onClick={() => setReplyToCommentId(null)}
+            className="ml-2 text-red-600 underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
             Annulla
           </button>
         </p>
       ) : (
-        <h3 className="text-xl font-semibold mb-4">Lascia un commento</h3>
+        <h3 id="comment-title" className="text-xl font-semibold mb-4">
+          Lascia un commento
+        </h3>
       )}
 
-      {successMessage && <p className="text-green-600 my-4">{successMessage}</p>}
+      {successMessage && (
+        <p className="text-green-600 my-4" role="status" aria-live="polite">
+          {successMessage}
+        </p>
+      )}
+
       <div className="mb-4">
-        <label className="block mb-1">Commento</label>
+        <label htmlFor="content" className="block mb-1 font-medium">
+          Commento
+        </label>
         <textarea
+          id="content"
           name="content"
           value={formData.content || ''}
           onChange={handleChange}
           rows="5"
           className="w-full border border-gray-500 px-3 py-2 rounded"
           required
+          aria-required="true"
         />
       </div>
 
       <button
         disabled={addCommentMutation.isLoading}
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
       >
-        Invia commento
+        {addCommentMutation.isLoading ? 'Invio in corso...' : 'Invia commento'}
       </button>
     </form>
   );

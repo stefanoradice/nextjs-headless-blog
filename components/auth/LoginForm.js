@@ -26,35 +26,75 @@ export default function LoginForm({ closeModal }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
-      <h2 className="text-xl font-semibold">Login</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 max-w-md mx-auto"
+      aria-labelledby="login-title"
+    >
+      <h2 id="login-title" className="text-xl font-semibold">
+        Login
+      </h2>
 
       {error?.error && !error?.errors && (
-        <p className="text-red-500" dangerouslySetInnerHTML={{ __html: error.error }} />
+        <p
+          className="text-red-500"
+          role="alert"
+          dangerouslySetInnerHTML={{ __html: error.error }}
+        />
       )}
 
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className={`w-full border p-2 rounded ${error?.username ? 'mb-0' : ''}`}
-      />
-      {error?.errors?.username && <p className="text-red-500">{error.errors.username[0]}</p>}
+      <div>
+        <label htmlFor="username" className="block font-medium">
+          Username
+        </label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          aria-required="true"
+          aria-invalid={!!error?.errors?.username}
+          aria-describedby={error?.errors?.username ? 'username-error' : undefined}
+          className={`w-full border p-2 rounded ${error?.errors?.username ? 'mb-0' : ''}`}
+          autoComplete="username"
+        />
+        {error?.errors?.username && (
+          <p id="username-error" className="text-red-500" role="alert">
+            {error.errors.username[0]}
+          </p>
+        )}
+      </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className={`w-full border p-2 rounded ${error?.password ? 'mb-0' : ''}`}
-      />
-      {error?.errors?.password && <p className="text-red-500">{error.errors.password[0]}</p>}
+      <div>
+        <label htmlFor="password" className="block font-medium">
+          Password
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          aria-required="true"
+          aria-invalid={!!error?.errors?.password}
+          aria-describedby={error?.errors?.password ? 'password-error' : undefined}
+          className={`w-full border p-2 rounded ${error?.errors?.password ? 'mb-0' : ''}`}
+          autoComplete="current-password"
+        />
+        {error?.errors?.password && (
+          <p id="password-error" className="text-red-500" role="alert">
+            {error.errors.password[0]}
+          </p>
+        )}
+      </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
       >
         {loading ? 'Accesso in corso...' : 'Accedi'}
       </button>
