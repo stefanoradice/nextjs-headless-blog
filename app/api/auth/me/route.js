@@ -26,17 +26,17 @@ export async function GET(request) {
     }
 
     const user = await res.json();
-
+    console.log(user.bookmarked_posts);
     return NextResponse.json({
       user: {
         id: user.id,
         name: user.name,
         email: decoded.data.user.email,
-        bookmarked_posts: Array.isArray(user.bookmarked_posts)
+        bookmarked_posts: user.bookmarked_posts ?? [] /*  Array.isArray(user.bookmarked_posts)
           ? user.bookmarked_posts.map(Number)
           : user.bookmarked_posts
             ? Object.values(user.bookmarked_posts).map(Number)
-            : [],
+            : [] */,
       },
     });
   } catch (err) {

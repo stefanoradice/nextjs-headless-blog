@@ -28,11 +28,6 @@ export default function PostBookmark({ post, classes = '' }) {
 
     channelRef.current.onmessage = (event) => {
       if (event.data?.type === 'bookmarked') {
-        setUser((prev) => ({
-          ...prev,
-          bookmarked_posts: event.data.bookmarkedPosts,
-        }));
-
         queryClient.invalidateQueries({
           predicate: (query) => query.queryKey[0] === 'posts',
         });
@@ -45,20 +40,22 @@ export default function PostBookmark({ post, classes = '' }) {
   }, [queryClient, setUser]);
 
   useEffect(() => {
-    setIsBookmarked(user?.bookmarked_posts?.includes(post.id));
+    console.log(user);
+    setIsBookmarked(!!user?.bookmarked_posts?.[post.id]);
   }, [user, post.id]);
 
   const mutation = useMutation({
-    mutationFn: async (bookmarked) => {
-      const method = bookmarked ? 'DELETE' : 'POST';
+    mutationFn: async (isBookmarked) => {
+      const method = isBookmarked ? 'DELETE' : 'POST';
       const res = await fetch(`/api/posts/bookmark/${post.id}/`, { method });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Errore durante il salvataggio dell'articolo");
       }
-      return { bookmarked };
+      const data = await res.json();
+      return { data };
     },
-    onMutate: async (bookmarked) => {
+    onMutate: async (isBookmarked) => {
       // Annulla fetch in corso per 'posts'
       await queryClient.cancelQueries({ queryKey: ['posts'] });
 
@@ -73,34 +70,46 @@ export default function PostBookmark({ post, classes = '' }) {
           pages: old.pages.map((page) => ({
             ...page,
             posts: page.posts.filter((p) =>
-              bookmarked && pathname !== '/blog' ? p.id !== post.id : true
+              isBookmarked && pathname !== '/blog' ? p.id !== post.id : true
             ),
           })),
         });
       });
 
       // Aggiorna stato locale
-      setIsBookmarked(!bookmarked);
+      setIsBookmarked(!isBookmarked);
+      return { prevData, isBookmarked };
+    },
+    onSuccess: async (data) => {
+      let updatedBookmarkedPosts = {};
 
-      const updatedBookmarkedPosts = bookmarked
-        ? user.bookmarked_posts.filter((id) => id !== post.id) // rimuovo
-        : [...user.bookmarked_posts, post.id];
+      if (!isBookmarked) {
+        delete user.bookmarked_posts[data.data.post_id];
+        updatedBookmarkedPosts = user.bookmarked_posts;
+      } else {
+        updatedBookmarkedPosts = {
+          ...user.bookmarked_posts,
+          [data.data.post_id]: data.data.created_at,
+        };
+      }
+
+      setUser((prev) => ({
+        ...prev,
+        bookmarked_posts: updatedBookmarkedPosts,
+      }));
 
       channelRef.current.postMessage({
         type: 'bookmarked',
-        bookmarkedPosts: updatedBookmarkedPosts, // array aggiornato dei bookmark
+        bookmarkedPosts: updatedBookmarkedPosts,
       });
-
-      return { prevData };
     },
     onError: (err, bookmarked, context) => {
-      // rollback in caso di errore
       if (context?.prevData) {
         context.prevData.forEach(([key, old]) => {
           queryClient.setQueryData(key, old);
         });
       }
-      setIsBookmarked(bookmarked); // ripristino stato locale
+      setIsBookmarked(bookmarked);
       alert(err.message);
     },
     onSettled: () => {
@@ -123,23 +132,23 @@ export default function PostBookmark({ post, classes = '' }) {
       alert("Devi essere loggato per poter salvare l'articolo"); // TODO: migliorare con un modal di login
       return;
     }
-
+  
     const bookmardAction = isBookmarked ? "DELETE" : "POST";
     const currentIsBookmarked = isBookmarked;
     setIsBookmarked(!currentIsBookmarked);
-
+  
     try {
       const res = await fetch(`/api/posts/bookmark/${post.id}/`, {
         method: bookmardAction,
       });
-
+  
       if (!res.ok) {
         const error = await res.json();
         setIsBookmarked(currentIsBookmarked);
         alert(error.message || "Errore durante il salvataggio dell'articolo");
         return;
       }
-
+  
       // Aggiornamento ottimistico: rimuovo il post dalle query cached
       queryClient.setQueriesData({ queryKey: ["posts", "bookmarks"] }, (old) => {
         if (!old) return old;
@@ -153,7 +162,7 @@ export default function PostBookmark({ post, classes = '' }) {
           })),
         };
       });
-
+  
     } catch (err) {
       setIsBookmarked(currentIsBookmarked);
       alert("Errore di connessione al server");

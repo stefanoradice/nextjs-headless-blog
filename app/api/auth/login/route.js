@@ -67,11 +67,7 @@ export async function POST(req) {
         id: user.id,
         name: user.name,
         email: decoded.data.user.email,
-        bookmarked_posts: Array.isArray(user.bookmarked_posts)
-          ? user.bookmarked_posts.map(Number)
-          : user.bookmarked_posts
-            ? Object.values(user.bookmarked_posts).map(Number)
-            : [],
+        bookmarked_posts: user.bookmarked_posts ?? [],
       },
     });
 
