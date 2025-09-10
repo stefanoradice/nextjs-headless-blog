@@ -1,17 +1,28 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { PostBookmarkedChart } from '../analytics/PostBookmarkedChart';
+import { UserPostChart } from '../analytics/UserPostChart';
+import SelectRange from '../analytics/SelectRange';
+import { useRangeStore } from '@/store/rangeStore';
 
 export default function DashboardHome() {
   const { user } = useAuth();
+  const { range } = useRangeStore();
+
   return (
     <>
       <h1>Benvenuto nella tua Dashboard {user.name}!</h1>
-      <p>Contenuto privato visibile solo agli utenti loggati.</p>
-      <section className="p-4 bg-white rounded-lg shadow-sm">
-        <PostBookmarkedChart />
-      </section>
+
+      <>
+        <header className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">I miei dati</h2>
+          <SelectRange />
+        </header>
+        <main className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <UserPostChart range={range} type="comments" title="Commenti lasciati" />
+          <UserPostChart range={range} type="bookmarked" title="Articoli preferiti" />
+        </main>
+      </>
     </>
   );
 }

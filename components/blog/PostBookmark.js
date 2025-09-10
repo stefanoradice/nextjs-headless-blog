@@ -48,6 +48,11 @@ export default function PostBookmark({ post, classes = '' }) {
     mutationFn: async (isBookmarked) => {
       const method = isBookmarked ? 'DELETE' : 'POST';
       const res = await fetch(`/api/posts/bookmark/${post.id}/`, { method });
+
+      if (res.status === 401) {
+        setUser(null);
+        throw new Error('Sessione scaduta. Effettua nuovamente il login.');
+      }
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Errore durante il salvataggio dell'articolo");

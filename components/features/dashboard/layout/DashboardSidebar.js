@@ -12,6 +12,11 @@ export default function DashboardSidebar() {
             </Link>
           </li>
           <li>
+            <Link href="/dashboard/user" className="text-gray-700 hover:text-blue-500 font-medium">
+              I miei dati
+            </Link>
+          </li>
+          <li>
             <Link
               href="/dashboard/comments"
               className="text-gray-700 hover:text-blue-500 font-medium"

@@ -8,13 +8,13 @@ export async function GET(req, { params }) {
 
     const { searchParams } = new URL(req.url);
     const range = searchParams.get('range');
-
+    const type = searchParams.get('type');
     if (!range) {
       return Response.json({ error: 'Paramentro "Range" mancante ' }, { status: 401 });
     }
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/metrics/bookmarked?range=${range}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/metrics/${type}?range=${range}`,
       {
         method: 'GET',
         headers: {
@@ -30,8 +30,10 @@ export async function GET(req, { params }) {
         { status: err.status }
       );
     }
+
     const data = await res.json();
-    return Response.json({ data });
+
+    return Response.json(data);
   } catch (err) {
     return Response.json({ error: 'Errore interno', details: err.message }, { status: 500 });
   }
