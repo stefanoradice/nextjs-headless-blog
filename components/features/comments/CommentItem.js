@@ -166,7 +166,7 @@ export default React.memo(function CommentItem({
         )}
         {isFetching && (
           <div className="mt-2">
-            <Spinner size="sm" color="gray-500" />
+            <Spinner size={4} />
           </div>
         )}
         {user && (
