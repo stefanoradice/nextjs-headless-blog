@@ -1,47 +1,40 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
-import { useWS } from '@/context/WSContext';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
+let channel;
+function getPostsChannel() {
+  if (!channel) {
+    channel = new BroadcastChannel('posts-channel');
+  }
+  return channel;
+}
+
 export default function PostBookmark({ post, classes = '' }) {
-  const { user, setUser, pathname } = useAuth();
+  const { user, setUser } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const queryClient = useQueryClient();
-  const channelRef = useRef(null);
-  const { subscribe } = useWS();
+  //const queryClient = useQueryClient();
+  const channel = getPostsChannel();
 
   useEffect(() => {
-    const unsubscribe = subscribe('bookmark', async () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === 'posts' && query.queryKey[1]?.startsWith('include='),
-      });
-    });
-
-    return () => unsubscribe();
-  }, [subscribe, queryClient]);
-
-  useEffect(() => {
-    channelRef.current = new BroadcastChannel('posts-channel');
-
-    channelRef.current.onmessage = (event) => {
+    const handler = (event) => {
       if (event.data?.type === 'bookmarked') {
-        queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'posts',
-        });
+        setUser(event.data.user);
       }
     };
 
+    channel.addEventListener('message', handler);
+
     return () => {
-      channelRef.current.close();
+      //   channel.removeEventListener('message', handler); // verifica perchè la cleanup interrompe la ricezione dei messaggi all'ultimo post rimosso dai bookmark
     };
-  }, [queryClient, setUser]);
+  }, [channel]);
 
   useEffect(() => {
-    console.log(user);
     setIsBookmarked(!!user?.bookmarked_posts?.[post.id]);
+    console.log(user);
   }, [user, post.id]);
 
   const mutation = useMutation({
@@ -61,64 +54,45 @@ export default function PostBookmark({ post, classes = '' }) {
       return { data };
     },
     onMutate: async (isBookmarked) => {
-      // Annulla fetch in corso per 'posts'
-      await queryClient.cancelQueries({ queryKey: ['posts'] });
-
-      // Snapshot stato precedente
-      const prevData = queryClient.getQueriesData({ queryKey: ['posts'] });
-
-      // Ottimistic update
-      prevData.forEach(([key, old]) => {
-        if (!old) return;
-        queryClient.setQueryData(key, {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            posts: page.posts.filter((p) =>
-              isBookmarked && pathname !== '/blog' ? p.id !== post.id : true
-            ),
-          })),
-        });
-      });
+      // snapshot dello user corrente per rollback
+      const prevUser = { ...user };
 
       // Aggiorna stato locale
       setIsBookmarked(!isBookmarked);
-      return { prevData, isBookmarked };
+
+      // ritorniamo prevUser per poter fare rollback in caso di errore
+      return { prevUser, isBookmarked };
     },
-    onSuccess: async (data) => {
-      let updatedBookmarkedPosts = {};
+    onSuccess: async (res) => {
+      const data = res.data;
+      let updatedBookmarkedPosts;
 
       if (!isBookmarked) {
-        delete user.bookmarked_posts[data.data.post_id];
-        updatedBookmarkedPosts = user.bookmarked_posts;
+        delete user.bookmarked_posts[data.post_id];
+        updatedBookmarkedPosts = user.bookmarked_posts ?? {};
       } else {
         updatedBookmarkedPosts = {
           ...user.bookmarked_posts,
-          [data.data.post_id]: data.data.created_at,
+          [data.post_id]: data.created_at,
         };
       }
-
-      setUser((prev) => ({
-        ...prev,
-        bookmarked_posts: updatedBookmarkedPosts,
-      }));
-
-      channelRef.current.postMessage({
+      const updatedUser = { ...user, bookmarked_posts: updatedBookmarkedPosts };
+      setUser(updatedUser);
+      channel.postMessage({
         type: 'bookmarked',
-        bookmarkedPosts: updatedBookmarkedPosts,
+        user: updatedUser,
       });
     },
-    onError: (err, bookmarked, context) => {
-      if (context?.prevData) {
-        context.prevData.forEach(([key, old]) => {
-          queryClient.setQueryData(key, old);
-        });
+
+    onError: (err, isBookmarked, context) => {
+      // rollback dello user precedente
+      if (context?.prevUser) {
+        setUser(context.prevUser);
       }
-      setIsBookmarked(bookmarked);
+      // rollback dello stato locale
+      setIsBookmarked(context?.isBookmarked);
+
       alert(err.message);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
   });
 
@@ -127,7 +101,7 @@ export default function PostBookmark({ post, classes = '' }) {
       alert("Devi essere loggato per poter salvare l'articolo");
       return;
     }
-    mutation.mutate(isBookmarked); // passiamo lo stato attuale
+    mutation.mutate(isBookmarked);
   };
 
   /*

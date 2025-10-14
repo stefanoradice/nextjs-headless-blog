@@ -12,7 +12,7 @@ const fetchPosts = async ({ pageParam = 1, queryKey }) => {
   return getPostsPaginated(pageParam, 6, filterQuery);
 };
 
-export default function PostList({ filterQuery }) {
+export default function PostList({ filterQuery, bookmarked = false }) {
   const observerRef = useRef(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, error, refetch } =
@@ -75,6 +75,8 @@ export default function PostList({ filterQuery }) {
         </button>
       </div>
     );
+
+  if (posts.length === 0) return <p>Nessun post {bookmarked ? 'salvato' : 'trovato'}.</p>;
 
   return (
     <>

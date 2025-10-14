@@ -6,12 +6,13 @@ wss.on('connection', (ws) => {
   console.log('Nuovo client connesso');
 
   ws.on('message', (message) => {
-    console.log('Messaggio ricevuto:', message);
+    const text = message.toString();
+    console.log('Messaggio ricevuto:', text);
 
     // Inoltra il messaggio a tutti i client tranne chi l'ha inviato
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(text);
       }
     });
   });
