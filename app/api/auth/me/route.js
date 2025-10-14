@@ -26,7 +26,6 @@ export async function GET(request) {
     }
 
     const user = await res.json();
-    console.log(user.bookmarked_posts);
     return NextResponse.json({
       user: {
         id: user.id,
