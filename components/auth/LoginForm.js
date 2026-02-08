@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export default function LoginForm({ closeModal }) {
   const router = useRouter();
 
-  const { login, error, loading, user } = useAuth();
+  const { login, error, loading } = useAuth();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

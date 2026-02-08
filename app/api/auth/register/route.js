@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getToken } from '@/lib/api/server/authServer';
-import { success } from 'zod';
 
 export async function POST(req) {
   try {

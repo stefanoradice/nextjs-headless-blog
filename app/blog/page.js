@@ -1,8 +1,6 @@
 import { getAllCategories, getAllTags } from '@/lib/api/client';
 import Sidebar from '@/components/layout/Sidebar';
 import PostList from '@/components/blog/PostList';
-import Skeleton from '@/components/ui/Skeleton';
-import { Suspense } from 'react';
 
 export default async function BlogPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;

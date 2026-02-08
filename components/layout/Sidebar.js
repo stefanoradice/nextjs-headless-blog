@@ -1,10 +1,9 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function Sidebar({ categories, tags }) {
-  useEffect(() => {}, []);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -14,16 +13,23 @@ export default function Sidebar({ categories, tags }) {
 
   const [selectedTags, setSelectedTags] = useState(searchParams.get('tags')?.split(',') || []);
 
-  const toggleValue = (value, setFunc, current) => {
+  const toggleValue = (value, selectedTerm) => {
+    const setFunc = selectedTerm === 'categories' ? setSelectedCategories : setSelectedTags;
+    const current = selectedTerm === 'categories' ? selectedCategories : selectedTags;
     const newValues = current.includes(value)
       ? current.filter((v) => v !== value)
       : [...current, value];
     setFunc([...newValues]);
-    return newValues;
+    if (selectedTerm === 'categories') {
+      applyFilters(newValues, selectedTags);
+    } else {
+      applyFilters(selectedCategories, newValues);
+    }
   };
 
   const applyFilters = (cats, tags) => {
     const query = new URLSearchParams();
+
     if (cats.length) query.set('categories', cats.join(','));
     if (tags.length) query.set('tags', tags.join(','));
     router.push(`?${query.toString()}`);
@@ -39,14 +45,7 @@ export default function Sidebar({ categories, tags }) {
               type="checkbox"
               className="accent-blue-600"
               checked={selectedCategories.includes(String(cat.id))}
-              onChange={() => {
-                const newCats = toggleValue(
-                  String(cat.id),
-                  setSelectedCategories,
-                  selectedCategories
-                );
-                applyFilters(newCats, selectedTags);
-              }}
+              onChange={() => toggleValue(String(cat.id), 'categories')}
             />
             <span>
               {cat.name} ({cat.count})
@@ -54,7 +53,6 @@ export default function Sidebar({ categories, tags }) {
           </label>
         ))}
       </div>
-
       <h3 className="text-lg font-semibold mt-6 mb-3">Tag</h3>
       <div className="flex flex-col gap-2">
         {tags.map((tag) => (
@@ -63,10 +61,7 @@ export default function Sidebar({ categories, tags }) {
               type="checkbox"
               className="accent-blue-600"
               checked={selectedTags.includes(String(tag.id))}
-              onChange={() => {
-                const newTags = toggleValue(String(tag.id), setSelectedTags, selectedTags);
-                applyFilters(selectedCategories, newTags);
-              }}
+              onChange={() => toggleValue(String(tag.id), 'tags')}
             />
             <span>
               {tag.name} ({tag.count})
