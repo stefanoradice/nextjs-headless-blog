@@ -1,6 +1,6 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
-import { /* useQueryClient */, useMutation } from '@tanstack/react-query';
+import { /* useQueryClient ,*/ useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
@@ -15,7 +15,7 @@ function getPostsChannel() {
 export default function PostBookmark({ post, classes = '' }) {
   const { user, setUser } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(false);
-  //const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const channel = getPostsChannel();
 
   useEffect(() => {
