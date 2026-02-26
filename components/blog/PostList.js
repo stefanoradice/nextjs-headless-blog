@@ -87,7 +87,7 @@ export default function PostList({ filterQuery, bookmarked = false }) {
           </SkeletonWrapper>
         ))}
       </div>
-
+      <span></span>
       <div ref={observerRef} aria-busy={isFetchingNextPage} className="h-10 mt-6 text-center">
         {isFetchingNextPage && (
           <ul className="flex flex-row h-10 gap-3 justify-center">
