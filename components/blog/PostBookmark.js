@@ -15,7 +15,7 @@ function getPostsChannel() {
 export default function PostBookmark({ post, classes = '' }) {
   const { user, setUser } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(false);
-  //const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const channel = getPostsChannel();
 
   useEffect(() => {
