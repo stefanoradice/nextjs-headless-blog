@@ -1,6 +1,6 @@
 # Next.js Headless Blog
 
-Un progetto **blog moderno** sviluppato con **Next.js 13 (App Router)** e **WordPress headless**. Include funzionalità avanzate come **React Server Components (RSC)**, **infinite scroll**, **autenticazione JWT**, **bookmarking**, e gestione interattiva dei commenti via WebSocket.
+Un progetto **blog moderno** sviluppato con **Next.js 13 (App Router)** e **WordPress headless**. Include funzionalità avanzate, come **React Server Components (RSC)**, **infinite scroll**, **autenticazione JWT**, **bookmarking**, e gestione interattiva dei commenti via WebSocket.
 
 ---
 
