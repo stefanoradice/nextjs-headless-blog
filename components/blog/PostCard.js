@@ -22,6 +22,7 @@ export default React.memo(function PostCard({ post }) {
 
   return (
     <article className="post-card relative h-full">
+      <span></span>
       <PostBookmark post={post} classes="absolute bottom-2 right-2" />
       <Link href={`/blog/${post.slug}`} onClick={handleClick} className="block">
         {imageUrl && (
